@@ -1,0 +1,81 @@
+﻿@model IEnumerable<internetprogramciligi1.Models.Course>
+@{
+    ViewData["Title"] = "Kurslar";
+}
+
+<div class="container mt-5">
+    <h2>Kurs Listesi</h2>
+    <p><a asp-action="Create" class="btn btn-primary">Yeni Kurs Ekle</a></p>
+
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Resim</th>
+                <th>Kurs Başlığı</th>
+                <th>Kategori</th>
+                <th>Eğitmen</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr id="row_@item.Id">
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                        {
+                            <img src="@item.ImageUrl" width="50" />
+                        }
+                        else
+                        {
+
+                            <span>Resim Yok</span>
+                        }
+                    </td>
+                    <td>@item.Title</td>
+                    <td><span class="badge bg-info text-dark">@item.Category?.Name</span></td>
+                    <td>@item.Instructor?.FullName</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm text-white">Detay</a>
+
+                        <button onclick="deleteCourse(@item.Id)" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash"></i> Sil
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    function deleteCourse(id) {
+        Swal.fire({
+            title: 'Emin misiniz?',
+            text: "Bu kursu silmek istediğinize emin misiniz?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Evet, Sil!',
+            cancelButtonText: 'Vazgeç'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Course/DeleteAjax/" + id,
+                    success: function (result) {
+                        if (result.success) {
+                            $("#row_" + id).fadeOut(500, function() { $(this).remove(); });
+                            Swal.fire('Silindi!', 'Kurs başarıyla silindi.', 'success');
+                        }
+                    },
+                    error: function () { Swal.fire('Hata', 'Silme işlemi başarısız oldu.', 'error'); }
+                });
+            }
+        })
+    }
+</script>

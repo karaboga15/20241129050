@@ -1,0 +1,32 @@
+﻿@model internetprogramciligi1.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Giriş Yap";
+}
+
+<div class="container mt-5 col-md-4">
+    <div class="text-center mb-4">
+        <h3>Eğitim Portalı</h3>
+        <p class="text-muted">Lütfen giriş yapınız.</p>
+    </div>
+
+    <div class="card shadow p-4">
+        <form asp-action="Login">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Username" class="form-label">Kullanıcı Adı</label>
+                <input asp-for="Username" class="form-control" placeholder="Kullanıcı Adınızı Giriniz" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">Şifre</label>
+                <input asp-for="Password" class="form-control" placeholder="Şifrenizi Giriniz" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2">Giriş Yap</button>
+        </form>
+    </div>
+
+</div>

@@ -1,0 +1,53 @@
+﻿@model internetprogramciligi1.Models.Course
+
+@{
+    ViewData["Title"] = "Kurs Detayı";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-5">
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img src="@Model.ImageUrl" class="img-fluid rounded shadow" alt="@Model.Title">
+            }
+            else
+            {
+                <img src="https://via.placeholder.com/600x400?text=Resim+Yok" class="img-fluid rounded shadow" alt="Resim Yok">
+            }
+        </div>
+
+        <div class="col-md-7">
+            <h2 class="display-5">@Model.Title</h2>
+
+            <div class="mb-3">
+                <span class="badge bg-warning text-dark fs-6">Kategori: @Model.Category?.Name</span>
+            </div>
+
+            @if (Model.Instructor != null)
+            {
+                <div class="d-flex align-items-center mb-4 p-3 border rounded bg-light">
+                    @if (!string.IsNullOrEmpty(Model.Instructor.ImageUrl))
+                    {
+                        <img src="@Model.Instructor.ImageUrl" alt="@Model.Instructor.FullName" class="rounded-circle me-3" width="60" height="60" style="object-fit:cover;">
+                    }
+                    <div>
+                        <h6 class="mb-0 text-muted">Eğitmen</h6>
+                        <h5 class="mb-0">@Model.Instructor.FullName</h5>
+                        <small class="text-primary">@Model.Instructor.Title</small>
+                    </div>
+                </div>
+            }
+
+            <h5 class="text-muted">Kurs Açıklaması:</h5>
+            <p class="lead">
+                @Model.Description
+            </p>
+
+            <div class="mt-4">
+                <button class="btn btn-success btn-lg px-4 me-2">Kursa Başla</button>
+                <a asp-action="Index" class="btn btn-outline-secondary btn-lg">Listeye Dön</a>
+            </div>
+        </div>
+    </div>
+</div>

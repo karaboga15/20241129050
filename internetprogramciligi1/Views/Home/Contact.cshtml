@@ -1,0 +1,118 @@
+﻿@{
+    ViewData["Title"] = "İletişim";
+}
+
+<div class="container mt-5">
+
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-dark">İletişim</h1>
+        <p class="lead text-muted">Proje hakkında sorularınız veya önerileriniz için ulaşabilirsiniz.</p>
+        <hr class="w-25 mx-auto text-warning" style="height: 3px; opacity: 1;">
+    </div>
+
+    <div class="row g-5">
+
+        <div class="col-md-5">
+            <div class="card shadow border-0 h-100" style="background-color: #061a33; color: white;">
+                <div class="card-body p-5">
+
+                    <h3 class="mb-4 fw-bold">
+                        <i class="bi bi-geo-alt-fill text-warning me-2"></i> Adres Bilgileri
+                    </h3>
+
+                    <div class="mb-4">
+                        <h5 class="text-warning fw-bold mb-2">Merkez Ofis</h5>
+                        <p class="mb-1">Akdeniz Üniversitesi, TBMYO</p>
+                        <p class="mb-1">Bilgisayar Programcılığı Bölümü</p>
+                        <p class="mb-0">Antalya / Türkiye</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-warning fw-bold mb-2">Telefon & E-Posta</h5>
+                        <p class="mb-2"><i class="bi bi-telephone me-2"></i> +90 543 840 40 34</p>
+                        <p class="mb-0"><i class="bi bi-envelope me-2"></i> ikaraboga579@gmail.com</p>
+                    </div>
+
+                    <div class="mt-5">
+                        <h5 class="text-warning fw-bold mb-3">Bizi Takip Edin</h5>
+                        <div class="d-flex gap-3">
+
+                            <a href="https://github.com/karaboga15" target="_blank" class="text-white fs-4 hover-effect">
+                                <i class="bi bi-github"></i>
+                            </a>
+
+                            <a href="https://www.instagram.com/karaboga.15/" target="_blank" class="text-white fs-4 hover-effect">
+                                <i class="bi bi-instagram"></i>
+                            </a>
+
+                            <a href="https://wa.me/905438404034" target="_blank" class="text-white fs-4 hover-effect">
+                                <i class="bi bi-whatsapp"></i>
+                            </a>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card shadow border-0 h-100">
+                <div class="card-body p-5">
+                    <h3 class="mb-4 fw-bold text-dark">Hızlı Mesaj Gönder</h3>
+                    <form>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">Ad Soyad</label>
+                                <input type="text" class="form-control bg-light" placeholder="Adınız">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">E-Posta</label>
+                                <input type="email" class="form-control bg-light" placeholder="mail@ornek.com">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold small">Konu</label>
+                                <input type="text" class="form-control bg-light" placeholder="Mesaj konusu...">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold small">Mesaj</label>
+                                <textarea class="form-control bg-light" rows="4" placeholder="Mesajınızı buraya yazabilirsiniz..."></textarea>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <button type="button" class="btn btn-warning w-100 py-3 fw-bold text-dark shadow-sm" onclick="mesajGonderildi()">
+                                    <i class="bi bi-send-fill me-2"></i> GÖNDER
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 mb-5 rounded overflow-hidden shadow">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3190.969299496666!2d30.65487731569661!3d36.89139197993026!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14c391d467941019%3A0x67905d6f31622619!2sAkdeniz%20%C3%9Cniversitesi!5e0!3m2!1str!2str!4v1634567890123!5m2!1str!2str"
+                width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy">
+        </iframe>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function mesajGonderildi() {
+        Swal.fire({
+            title: 'Başarılı!',
+            text: 'Mesajınız iletildi.',
+            icon: 'success',
+            confirmButtonColor: '#061a33'
+        });
+    }
+</script>
+
+<style>
+    .hover-effect:hover {
+        color: #ffc107 !important;
+        transition: color 0.3s;
+    }
+</style>

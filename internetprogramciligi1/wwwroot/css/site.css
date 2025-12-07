@@ -1,0 +1,28 @@
+/* GENEL AYARLAR */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    background-color: #f4f6f9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* NAVBAR GÖRÜNÜMÜ */
+.navbar {
+    background: linear-gradient(45deg, #0d253f, #1a3c5e) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+.navbar-brand, .nav-link {
+    color: #ffffff !important;
+}
+
+/* FOOTER RENGÝ */
+.footer {
+    background-color: #0d253f !important;
+    color: rgba(255,255,255,0.7) !important;
+    border-top: none !important;
+    width: 100%;
+}

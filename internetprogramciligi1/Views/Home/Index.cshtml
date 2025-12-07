@@ -1,0 +1,83 @@
+﻿@model IEnumerable<internetprogramciligi1.Models.Course>
+
+@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<div class="bg-light p-5 rounded-3 mb-4 text-center">
+    <h1 class="display-4 fw-bold">Eğitim Portalına Hoşgeldiniz</h1>
+    <p class="lead">Kendinizi geliştirmek için en iyi kurslar burada.</p>
+    <a href="/Course" class="btn btn-primary btn-lg">Tüm Kursları İncele</a>
+</div>
+
+<div class="row text-center mb-5">
+    <div class="col-md-6 mb-3">
+        <div class="card bg-primary text-white shadow-sm p-3">
+            <div class="card-body">
+                <h2 class="display-4 fw-bold">@ViewBag.CategoryCount</h2>
+                <p class="lead mb-0">Farklı Kategori</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card bg-success text-white shadow-sm p-3">
+            <div class="card-body">
+                <h2 class="display-4 fw-bold">@ViewBag.CourseCount</h2>
+                <p class="lead mb-0">Aktif Kurs</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center mb-5">
+    <div class="col-md-8">
+        <form asp-controller="Home" asp-action="Index" method="get">
+            <div class="input-group input-group-lg">
+                <input type="text" name="searchString" class="form-control" placeholder="Hangi eğitimi arıyorsun? (Örn: C#, Web, Yazılım...)" aria-label="Kurs ara">
+                <button class="btn btn-primary" type="submit">ARA</button>
+                <a href="/Home/Index" class="btn btn-outline-secondary">Sıfırla</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<h3 class="mb-4">Son Eklenen Kurslar</h3>
+
+<div class="row">
+    @if (Model.Any())
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                    {
+                        <img src="@item.ImageUrl" class="card-img-top" alt="@item.Title" style="height: 200px; object-fit: cover;">
+                    }
+                    else
+                    {
+                        <img src="https://via.placeholder.com/300x200?text=Egitim+Portali" class="card-img-top" style="height: 200px; object-fit: cover;">
+                    }
+
+                    <div class="card-body">
+                        <span class="badge bg-warning text-dark mb-2">@item.Category?.Name</span>
+
+                        <h5 class="card-title">@item.Title</h5>
+                        <p class="card-text text-muted">
+                            @(item.Description != null && item.Description.Length > 100 ? item.Description.Substring(0, 100) + "..." : item.Description)
+                        </p>
+                    </div>
+                    <div class="card-footer bg-white border-top-0">
+                        <a asp-controller="Course" asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary w-100">İncele</a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-info">
+            Henüz hiç kurs eklenmemiş. <a href="/Course/Create">İlk kursu sen ekle!</a>
+        </div>
+    }
+</div>
