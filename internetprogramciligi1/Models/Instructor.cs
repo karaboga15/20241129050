@@ -21,7 +21,7 @@ namespace internetprogramciligi1.Models
         [Display(Name = "Profil Resmi")]
         public string? ImageUrl { get; set; }
 
-        // Ad ve Soyadı birleştiren küçük bir yardımcı özellik
+        
         public string FullName => $"{Name} {Surname}";
     }
 }

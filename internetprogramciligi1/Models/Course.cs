@@ -18,14 +18,14 @@ namespace internetprogramciligi1.Models
         [Display(Name = "Resim (URL)")]
         public string? ImageUrl { get; set; }
 
-        // --- Kategori İlişkisi ---
+        
         [Display(Name = "Kategori")]
         public int CategoryId { get; set; }
 
         [ForeignKey("CategoryId")]
         public virtual Category? Category { get; set; }
 
-        // --- Eğitmen İlişkisi ---
+        
         [Display(Name = "Eğitmen")]
         public int? InstructorId { get; set; }
 

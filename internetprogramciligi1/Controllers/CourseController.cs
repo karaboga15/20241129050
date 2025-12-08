@@ -9,7 +9,7 @@ namespace internetprogramciligi1.Controllers
     [Authorize]
     public class CourseController : Controller
     {
-        // Artık 3 tane Depomuz (Repository) var
+       
         private readonly CourseRepository _courseRepo;
         private readonly CategoryRepository _categoryRepo;
         private readonly InstructorRepository _instructorRepo;
@@ -21,14 +21,14 @@ namespace internetprogramciligi1.Controllers
             _instructorRepo = instructorRepo;
         }
 
-        // --- LİSTELEME ---
+       
         public IActionResult Index()
         {
             var courses = _courseRepo.GetAll();
             return View(courses);
         }
 
-        // --- DETAY ---
+        
         public IActionResult Details(int id)
         {
             var course = _courseRepo.GetById(id);
@@ -36,16 +36,16 @@ namespace internetprogramciligi1.Controllers
             return View(course);
         }
 
-        // --- EKLEME SAYFASI ---
+        
         public IActionResult Create()
         {
-            // Dropdownları doldururken de Repository kullanıyoruz
+            
             ViewBag.Categories = new SelectList(_categoryRepo.GetAll(), "Id", "Name");
             ViewBag.Instructors = new SelectList(_instructorRepo.GetAll(), "Id", "FullName");
             return View();
         }
 
-        // --- EKLEME İŞLEMİ ---
+       
         [HttpPost]
         public IActionResult Create(Course course)
         {
@@ -60,7 +60,7 @@ namespace internetprogramciligi1.Controllers
             return View(course);
         }
 
-        // --- SİLME ---
+        
         public IActionResult Delete(int id)
         {
             _courseRepo.Delete(id);

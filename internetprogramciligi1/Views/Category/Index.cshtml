@@ -21,7 +21,7 @@
         <tbody>
             @foreach (var item in Model)
             {
-                // Her satıra özel bir ID veriyoruz (row_1, row_2 gibi) ki Javascript hangisini sileceğini bilsin
+                
                 <tr id="row_@item.Id">
                     <td>@item.Id</td>
                     <td>@item.Name</td>
@@ -41,7 +41,7 @@
 
 <script>
     function deleteCategory(id) {
-        // 1. Önce kullanıcıya soralım (Şık bir kutuyla)
+       
         Swal.fire({
             title: 'Emin misiniz?',
             text: "Bu kategoriyi silmek istediğinize emin misiniz?",
@@ -53,12 +53,12 @@
             cancelButtonText: 'Vazgeç'
         }).then((result) => {
             if (result.isConfirmed) {
-                // 2. Eğer Evet derse, Arka planda (AJAX) Controller'a git
+               
                 $.ajax({
                     type: "POST",
                     url: "/Category/DeleteAjax/" + id,
                     success: function (result) {
-                        // 3. Başarılı olursa, o satırı ekrandan yavaşça sil
+                       
                         if (result.success) {
                             $("#row_" + id).fadeOut(500, function() {
                                 $(this).remove();

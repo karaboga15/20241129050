@@ -11,23 +11,23 @@ namespace internetprogramciligi1.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _context; // Veritabanı bağlantısı
+        private readonly ApplicationDbContext _context; 
 
-        // Yapıcı metodda veritabanını çağırıyoruz
+       
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
             _context = context;
         }
 
-        // Parametre olarak 'searchString' (aranan kelime) alıyoruz
+        
         public IActionResult Index(string searchString)
         {
-            // 1. İstatistikleri Hesapla (Sayaçlar)
-            ViewBag.CourseCount = _context.Courses.Count(); // Toplam Kurs Sayısı
-            ViewBag.CategoryCount = _context.Categories.Count(); // Toplam Kategori Sayısı
+            
+            ViewBag.CourseCount = _context.Courses.Count(); 
+            ViewBag.CategoryCount = _context.Categories.Count(); 
 
-            // -- Burası Eski Arama Kodumuz --
+            
             var courses = _context.Courses.Include(c => c.Category).AsQueryable();
 
             if (!string.IsNullOrEmpty(searchString))

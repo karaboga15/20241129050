@@ -1,4 +1,4 @@
-/* GENEL AYARLAR */
+
 html, body {
     height: 100%;
     margin: 0;
@@ -9,7 +9,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* NAVBAR GÖRÜNÜMÜ */
+
 .navbar {
     background: linear-gradient(45deg, #0d253f, #1a3c5e) !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
@@ -19,7 +19,7 @@ body {
     color: #ffffff !important;
 }
 
-/* FOOTER RENGÝ */
+
 .footer {
     background-color: #0d253f !important;
     color: rgba(255,255,255,0.7) !important;

@@ -1,6 +1,6 @@
 ﻿using internetprogramciligi1.Data;
 using internetprogramciligi1.Models;
-using Microsoft.EntityFrameworkCore; // Include için şart
+using Microsoft.EntityFrameworkCore; 
 
 namespace internetprogramciligi1.Repositories
 {
@@ -13,7 +13,7 @@ namespace internetprogramciligi1.Repositories
             _context = context;
         }
 
-        // İlişkileriyle beraber hepsini getir
+        
         public List<Course> GetAll()
         {
             return _context.Courses
@@ -22,7 +22,7 @@ namespace internetprogramciligi1.Repositories
                 .ToList();
         }
 
-        // Tek bir tanesini detaylı getir
+        
         public Course GetById(int id)
         {
             return _context.Courses
@@ -31,7 +31,7 @@ namespace internetprogramciligi1.Repositories
                 .FirstOrDefault(m => m.Id == id);
         }
 
-        // Filtreli Getir (Arama ve Vitrin için)
+       
         public IQueryable<Course> GetQueryable()
         {
             return _context.Courses
@@ -55,7 +55,7 @@ namespace internetprogramciligi1.Repositories
             }
         }
 
-        // İstatistikler için sayı ver
+        
         public int Count()
         {
             return _context.Courses.Count();

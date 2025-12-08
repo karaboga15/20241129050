@@ -15,20 +15,20 @@ namespace internetprogramciligi1.Controllers
             _context = context;
         }
 
-        // Eğitmenleri Listele
+        
         public IActionResult Index()
         {
             var instructors = _context.Instructors.ToList();
             return View(instructors);
         }
 
-        // Yeni Eğitmen Ekleme Sayfası
+       
         public IActionResult Create()
         {
             return View();
         }
 
-        // Eğitmeni Kaydet
+       
         [HttpPost]
         public IActionResult Create(Instructor instructor)
         {
@@ -41,7 +41,7 @@ namespace internetprogramciligi1.Controllers
             return View(instructor);
         }
 
-        // Silme İşlemi (Hoca silinirse)
+       
         public IActionResult Delete(int id)
         {
             var instructor = _context.Instructors.Find(id);
@@ -55,10 +55,9 @@ namespace internetprogramciligi1.Controllers
         [HttpPost]
         public IActionResult DeleteAjax(int id)
         {
-            // Eğer Repository kullanıyorsan:
-            // _instructorRepo.Delete(id);
+            
 
-            // Eğer direkt Context kullanıyorsan (InstructorController'ı Repository'e çevirmediysek):
+           
             var instructor = _context.Instructors.Find(id);
             if (instructor != null)
             {
