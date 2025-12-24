@@ -22,16 +22,17 @@ namespace internetprogramciligi1.Repositories
                 .ToList();
         }
 
-        
+
         public Course GetById(int id)
         {
             return _context.Courses
                 .Include(c => c.Category)
                 .Include(c => c.Instructor)
+                .Include(c => c.Lessons) // <--- BUNU EKLEMEK ŞART
                 .FirstOrDefault(m => m.Id == id);
         }
 
-       
+
         public IQueryable<Course> GetQueryable()
         {
             return _context.Courses

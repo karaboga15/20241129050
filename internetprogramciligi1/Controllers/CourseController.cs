@@ -3,20 +3,18 @@ using internetprogramciligi1.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.SignalR; // Eklendi
-using internetprogramciligi1.Hubs;    // Eklendi (Hub klasör adınız)
+using Microsoft.AspNetCore.SignalR;
+using internetprogramciligi1.Hubs;
 
 namespace internetprogramciligi1.Controllers
 {
-    [Authorize]
     public class CourseController : Controller
     {
         private readonly CourseRepository _courseRepo;
         private readonly CategoryRepository _categoryRepo;
         private readonly InstructorRepository _instructorRepo;
-        private readonly IHubContext<GeneralHub> _hubContext; // SignalR servisi eklendi
+        private readonly IHubContext<GeneralHub> _hubContext;
 
-        // Constructor güncellendi
         public CourseController(CourseRepository courseRepo, CategoryRepository categoryRepo, InstructorRepository instructorRepo, IHubContext<GeneralHub> hubContext)
         {
             _courseRepo = courseRepo;
@@ -25,12 +23,16 @@ namespace internetprogramciligi1.Controllers
             _hubContext = hubContext;
         }
 
+        // 1. KULLANICI TARAFI (VİTRİN) - Herkes Görebilir
+        [AllowAnonymous]
         public IActionResult Index()
         {
             var courses = _courseRepo.GetAll();
             return View(courses);
         }
 
+        // Kullanıcı Detay Sayfası
+        [AllowAnonymous]
         public IActionResult Details(int id)
         {
             var course = _courseRepo.GetById(id);
@@ -38,6 +40,16 @@ namespace internetprogramciligi1.Controllers
             return View(course);
         }
 
+        // 2. ADMIN TARAFI (YÖNETİM LİSTESİ) - Sadece Admin
+        [Authorize(Roles = "Admin")]
+        public IActionResult List()
+        {
+            var courses = _courseRepo.GetAll();
+            return View(courses); // Yeni oluşturacağımız Admin tablosuna gider
+        }
+
+        // Sadece Admin Kurs Ekleyebilir
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewBag.Categories = new SelectList(_categoryRepo.GetAll(), "Id", "Name");
@@ -46,16 +58,16 @@ namespace internetprogramciligi1.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create(Course course)
         {
             if (ModelState.IsValid)
             {
                 _courseRepo.Add(course);
-
-                // SİGNALR TETİKLEME: Kurs eklendiğinde admin paneline haber ver
                 _hubContext.Clients.All.SendAsync("ReceiveInfo", "Yeni bir kurs eklendi: " + course.Title);
 
-                return RedirectToAction("Index");
+                // Kaydettikten sonra Admin Listesine dön
+                return RedirectToAction("List");
             }
 
             ViewBag.Categories = new SelectList(_categoryRepo.GetAll(), "Id", "Name");
@@ -63,17 +75,21 @@ namespace internetprogramciligi1.Controllers
             return View(course);
         }
 
-        public IActionResult Delete(int id)
-        {
-            _courseRepo.Delete(id);
-            return RedirectToAction("Index");
-        }
-
+        // Sadece Admin Silebilir
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult DeleteAjax(int id)
         {
             _courseRepo.Delete(id);
             return Json(new { success = true });
+        }
+
+        [AllowAnonymous] // Üye olmayan da izleyebilsin (veya [Authorize] yapabilirsin)
+        public IActionResult Watch(int id)
+        {
+            var course = _courseRepo.GetById(id);
+            if (course == null) return NotFound();
+            return View(course);
         }
     }
 }

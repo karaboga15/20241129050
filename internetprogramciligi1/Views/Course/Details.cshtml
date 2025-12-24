@@ -45,7 +45,9 @@
             </p>
 
             <div class="mt-4">
-                <button class="btn btn-success btn-lg px-4 me-2">Kursa Başla</button>
+                <a asp-action="Watch" asp-route-id="@Model.Id" class="btn btn-success btn-lg px-4 me-2">
+                    <i class="bi bi-play-circle"></i> Kursa Başla
+                </a>
                 <a asp-action="Index" class="btn btn-outline-secondary btn-lg">Listeye Dön</a>
             </div>
         </div>

@@ -1,0 +1,32 @@
+﻿@model internetprogramciligi1.Models.Lesson
+
+@{
+    ViewData["Title"] = "Ders Ekle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">@ViewBag.CourseName İçin Ders Ekle</h6>
+    </div>
+    <div class="card-body">
+        <form asp-action="Create">
+            <input type="hidden" asp-for="CourseId" />
+
+            <div class="form-group mb-3">
+                <label asp-for="Title" class="fw-bold">Ders Başlığı</label>
+                <input asp-for="Title" class="form-control" placeholder="Örn: 1. Giriş" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="VideoUrl" class="fw-bold">Youtube Linki</label>
+                <input asp-for="VideoUrl" class="form-control" placeholder="Örn: https://youtube.com/..." />
+                <span asp-validation-for="VideoUrl" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-success">Kaydet</button>
+            <a href="/Course/List" class="btn btn-secondary">İptal</a>
+        </form>
+    </div>
+</div>

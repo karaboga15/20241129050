@@ -31,5 +31,8 @@ namespace internetprogramciligi1.Models
 
         [ForeignKey("InstructorId")]
         public virtual Instructor? Instructor { get; set; }
+
+        public string? VideoUrl { get; set; }
+        public virtual List<Lesson> Lessons { get; set; } = new List<Lesson>();
     }
 }

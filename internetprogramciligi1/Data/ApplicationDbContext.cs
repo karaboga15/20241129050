@@ -14,5 +14,6 @@ namespace internetprogramciligi1.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Instructor> Instructors { get; set; }
+        public DbSet<Lesson> Lessons { get; set; }
     }
 }
