@@ -1,0 +1,121 @@
+﻿@{
+    ViewData["Title"] = "Yönetici Paneli";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Yönetim Paneli</h1>
+    <p class="text-muted">Sistemin genel durumunu buradan takip edebilirsiniz.</p>
+
+    <div class="row mt-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2 border-primary border-3 border-start border-0">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Toplam Kurs
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.CourseCount</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2 border-success border-3 border-start border-0">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Kategoriler
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.CategoryCount</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tags fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2 border-info border-3 border-start border-0">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Eğitmenler
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.InstructorCount</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chalkboard-teacher fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2 border-warning border-3 border-start border-0">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Anlık Durum
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800 small" id="liveNotification">Sistem Aktif</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Hızlı İşlemler</h6>
+                </div>
+                <div class="card-body">
+                    <a href="/Course/Create" class="btn btn-primary btn-icon-split mb-2 w-100 text-start">
+                        <span class="icon text-white-50 mr-2"><i class="fas fa-plus"></i></span>
+                        <span class="text">Yeni Kurs Ekle</span>
+                    </a>
+                    <a href="/Category/Create" class="btn btn-success btn-icon-split mb-2 w-100 text-start">
+                        <span class="icon text-white-50 mr-2"><i class="fas fa-tag"></i></span>
+                        <span class="text">Yeni Kategori Ekle</span>
+                    </a>
+                    <a href="/Instructor/Create" class="btn btn-info btn-icon-split w-100 text-start">
+                        <span class="icon text-white-50 mr-2"><i class="fas fa-user-tie"></i></span>
+                        <span class="text">Yeni Eğitmen Ekle</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Sistem Bilgisi</h6>
+                </div>
+                <div class="card-body">
+                    <p>Eğitim Portalı Yönetim Paneline hoş geldiniz. Sol menüyü kullanarak içerik yönetimi yapabilirsiniz.</p>
+                    <p class="mb-0 text-muted small">
+                        <strong>Sunucu Saati:</strong> @DateTime.Now.ToString("dd MMMM yyyy HH:mm")
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
