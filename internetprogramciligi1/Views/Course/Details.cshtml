@@ -18,7 +18,7 @@
         </div>
 
         <div class="col-md-7">
-            <h2 class="display-5">@Model.Title</h2>
+            <h2 class="display-5 fw-bold">@Model.Title</h2>
 
             <div class="mb-3">
                 <span class="badge bg-warning text-dark fs-6">Kategori: @Model.Category?.Name</span>
@@ -44,12 +44,56 @@
                 @Model.Description
             </p>
 
-            <div class="mt-4">
-                <a asp-action="Watch" asp-route-id="@Model.Id" class="btn btn-success btn-lg px-4 me-2">
-                    <i class="bi bi-play-circle"></i> Kursa Başla
-                </a>
+            <div class="mt-5">
+                <button onclick="enrollCourse(@Model.Id)" class="btn btn-success btn-lg px-4 me-2">
+                    <i class="bi bi-cart-plus"></i> Kursa Kaydol (Ücretsiz)
+                </button>
+
                 <a asp-action="Index" class="btn btn-outline-secondary btn-lg">Listeye Dön</a>
             </div>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    function enrollCourse(id) {
+        $.ajax({
+            type: "POST",
+            url: "/Profile/Enroll",
+            data: { courseId: id },
+            success: function (res) {
+                if (res.success) {
+                    Swal.fire({
+                        title: 'Tebrikler!',
+                        text: res.message,
+                        icon: 'success',
+                        confirmButtonText: 'Profilime Git'
+                    }).then(() => {
+                        window.location.href = "/Profile/Index"; // Kayıttan sonra profile git
+                    });
+                } else {
+                    // "Zaten kayıtlısınız" vb. mesajlar için
+                    Swal.fire('Bilgi', res.message, 'info');
+                }
+            },
+            error: function(xhr) {
+                // Eğer oturum açmamışsa hata verir
+                Swal.fire({
+                    title: 'Giriş Yapmalısınız',
+                    text: 'Kursa kaydolmak için lütfen giriş yapın.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Giriş Yap',
+                    cancelButtonText: 'İptal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/Account/Login";
+                    }
+                });
+            }
+        });
+    }
+</script>

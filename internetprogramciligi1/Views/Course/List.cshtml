@@ -6,6 +6,48 @@
 }
 
 <div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary mb-2">Filtrele & Ara</h6>
+        <form method="get" asp-action="List" class="row g-3 align-items-center">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="fas fa-search text-gray-400"></i></span>
+                    <input type="text" name="search" class="form-control" placeholder="Kurs başlığı ara..." value="@ViewBag.CurrentSearch">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select name="categoryId" class="form-control">
+                    <option value="">-- Tüm Kategoriler --</option>
+                    @if (ViewBag.Categories != null)
+                    {
+                        foreach (var cat in ViewBag.Categories)
+                        {
+                            if (ViewBag.CurrentCategory != null && (int)ViewBag.CurrentCategory == cat.Id)
+                            {
+                                <option value="@cat.Id" selected>@cat.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@cat.Id">@cat.Name</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter"></i> Uygula</button>
+            </div>
+            <div class="col-md-2">
+                @if (!string.IsNullOrEmpty(ViewBag.CurrentSearch) || ViewBag.CurrentCategory != null)
+                {
+                    <a asp-action="List" class="btn btn-outline-secondary w-100">Temizle</a>
+                }
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
         <h6 class="m-0 font-weight-bold text-primary">Kurs Listesi</h6>
         <a asp-action="Create" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Yeni Kurs Ekle</a>
@@ -19,38 +61,62 @@
                         <th>Başlık</th>
                         <th>Kategori</th>
                         <th>Eğitmen</th>
-                        <th>İşlemler</th>
+                        <th style="width: 320px;">İşlemler</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @if (Model.Any())
                     {
-                        <tr id="row_@item.Id">
-                            <td class="text-center">
-                                @if (!string.IsNullOrEmpty(item.ImageUrl))
-                                {
-                                    <img src="@item.ImageUrl" width="60" height="40" class="rounded" style="object-fit:cover;" />
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary">Yok</span>
-                                }
-                            </td>
-                            <td>@item.Title</td>
-                            <td><span class="badge bg-info text-dark">@item.Category?.Name</span></td>
-                            <td>@item.Instructor?.FullName</td>
-                            <td>
-                                <a asp-controller="Lesson" asp-action="Create" asp-route-courseId="@item.Id" class="btn btn-warning btn-sm" title="Ders Ekle">
-                                    <i class="fas fa-video"></i>
-                                </a>
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row_@item.Id">
+                                <td class="text-center">
+                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                    {
+                                        <img src="@item.ImageUrl" width="60" height="40" class="rounded" style="object-fit:cover;" />
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Yok</span>
+                                    }
+                                </td>
+                                <td>@item.Title</td>
+                                <td><span class="badge bg-info text-dark">@item.Category?.Name</span></td>
+                                <td>@item.Instructor?.FullName</td>
+                                <td>
+                                    <a asp-action="EnrolledUsers" asp-route-courseId="@item.Id" class="btn btn-dark btn-sm" title="Kayıtlı Öğrenciler">
+                                        <i class="fas fa-users"></i>
+                                    </a>
 
-                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm" target="_blank" title="İncele">
-                                    <i class="fas fa-eye"></i>
-                                </a>
+                                    <a asp-controller="Lesson" asp-action="Create" asp-route-courseId="@item.Id" class="btn btn-success btn-sm" title="Hızlı Ders Ekle">
+                                        <i class="fas fa-plus"></i>
+                                    </a>
 
-                                <button onclick="deleteCourse(@item.Id)" class="btn btn-danger btn-sm" title="Sil">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                    <a asp-controller="Lesson" asp-action="List" asp-route-courseId="@item.Id" class="btn btn-primary btn-sm" title="Dersleri Yönet">
+                                        <i class="fas fa-list"></i>
+                                    </a>
+
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm" target="_blank" title="Sitede Gör">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm" title="Düzenle">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    <button onclick="deleteCourse(@item.Id)" class="btn btn-danger btn-sm" title="Sil">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted p-4">
+                                <i class="fas fa-search fa-2x mb-2"></i><br />
+                                Aradığınız kriterlere uygun kurs bulunamadı.
                             </td>
                         </tr>
                     }
@@ -67,7 +133,7 @@
     function deleteCourse(id) {
         Swal.fire({
             title: 'Emin misiniz?',
-            text: "Bu kursu silmek istediğinize emin misiniz?",
+            text: "Bu kursu ve içindeki tüm dersleri silmek istediğinize emin misiniz?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',

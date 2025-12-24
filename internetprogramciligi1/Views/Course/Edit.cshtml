@@ -1,0 +1,48 @@
+﻿@model internetprogramciligi1.Models.Course
+@{
+    ViewData["Title"] = "Kurs Düzenle"; Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Kurs Düzenle</h6></div>
+    <div class="card-body">
+        <form asp-action="Edit">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="Title" class="fw-bold">Başlık</label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label asp-for="CategoryId" class="fw-bold">Kategori</label>
+                    <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories"></select>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="InstructorId" class="fw-bold">Eğitmen</label>
+                    <select asp-for="InstructorId" class="form-control" asp-items="ViewBag.Instructors"></select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ImageUrl" class="fw-bold">Resim URL</label>
+                <input asp-for="ImageUrl" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="VideoUrl" class="fw-bold">Tanıtım Videosu URL</label>
+                <input asp-for="VideoUrl" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="fw-bold">Açıklama</label>
+                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Güncelle</button>
+            <a asp-action="List" class="btn btn-secondary">İptal</a>
+        </form>
+    </div>
+</div>

@@ -3,26 +3,21 @@
 @{
     ViewData["Title"] = "Ders İzle: " + Model.Title;
 
-    // URL'den gelen 'lessonId'yi al. Eğer yoksa ilk dersi seç.
     var activeLessonId = Context.Request.Query["lessonId"].ToString();
-
-    // Kursun dersleri var mı?
     var lessons = Model.Lessons ?? new List<internetprogramciligi1.Models.Lesson>();
 
-    // Aktif dersi bul (ID gelmişse onu bul, gelmemişse ilkini al)
     var currentLesson = string.IsNullOrEmpty(activeLessonId)
                         ? lessons.FirstOrDefault()
                         : lessons.FirstOrDefault(l => l.Id.ToString() == activeLessonId);
 
-    // Eğer hiç ders yoksa (veritabanı boşsa) kursun kendi tanıtım videosunu kullanalım
-    var videoUrlToPlay = currentLesson != null ? currentLesson.VideoUrl : Model.ImageUrl; // ImageUrl yerine varsa VideoUrl
-    var currentTitle = currentLesson != null ? currentLesson.Title : "Tanıtım";
+    var videoUrlToPlay = currentLesson != null ? currentLesson.VideoUrl : Model.ImageUrl;
+    var currentTitle = currentLesson != null ? currentLesson.Title : "Tanıtım / Giriş";
 }
 
 <div class="container mt-4">
     <div class="row">
         <div class="col-lg-8">
-            <div class="ratio ratio-16x9 shadow-lg rounded overflow-hidden">
+            <div class="ratio ratio-16x9 shadow-lg rounded overflow-hidden bg-black">
                 @{
                     var embedSrc = "";
                     if (!string.IsNullOrEmpty(videoUrlToPlay))
@@ -30,12 +25,12 @@
                         if (videoUrlToPlay.Contains("watch?v="))
                         {
                             var vidId = videoUrlToPlay.Split("watch?v=")[1].Split("&")[0];
-                            embedSrc = $"https://www.youtube.com/embed/{vidId}?rel=0&autoplay=1";
+                            embedSrc = $"https://www.youtube.com/embed/{vidId}?rel=0";
                         }
                         else if (videoUrlToPlay.Contains("youtu.be/"))
                         {
                             var vidId = videoUrlToPlay.Split("youtu.be/")[1];
-                            embedSrc = $"https://www.youtube.com/embed/{vidId}?rel=0&autoplay=1";
+                            embedSrc = $"https://www.youtube.com/embed/{vidId}?rel=0";
                         }
                     }
                 }
@@ -46,55 +41,96 @@
                 }
                 else
                 {
-                    <div class="d-flex align-items-center justify-content-center bg-dark text-white h-100">
-                        <h4>Bu ders için video bulunamadı.</h4>
+                    <div class="d-flex align-items-center justify-content-center h-100 text-white">
+                        <p>Video yüklenemedi veya bulunamadı.</p>
                     </div>
                 }
             </div>
 
             <div class="mt-3">
                 <h3 class="fw-bold">@Model.Title</h3>
-                <h5 class="text-primary">@currentTitle</h5>
+                <h5 class="text-primary"><i class="bi bi-play-btn"></i> @currentTitle</h5>
                 <hr />
                 <p>@Model.Description</p>
             </div>
         </div>
 
         <div class="col-lg-4">
-            <div class="card shadow-sm h-100">
+            <div class="card shadow-sm h-100 border-0">
                 <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
                     <h6 class="mb-0">Ders İçeriği</h6>
-                    <span class="badge bg-secondary">@lessons.Count Ders</span>
+                    <span class="badge bg-secondary">@lessons.Count Video</span>
                 </div>
 
-                <div class="list-group list-group-flush overflow-auto" style="max-height: 500px;">
+                <div class="list-group list-group-flush overflow-auto" style="max-height: 400px;">
                     @if (lessons.Any())
                     {
                         @foreach (var lesson in lessons)
                         {
                             var isActive = (currentLesson != null && lesson.Id == currentLesson.Id) ? "active" : "";
-
                             <a href="?lessonId=@lesson.Id" class="list-group-item list-group-item-action @isActive">
                                 <div class="d-flex w-100 justify-content-between">
-                                    <span class="mb-1">
-                                        <i class="bi bi-play-circle-fill me-2"></i> @lesson.Title
-                                    </span>
+                                    <span class="mb-1"><i class="bi bi-play-circle me-2"></i> @lesson.Title</span>
                                 </div>
                             </a>
                         }
                     }
                     else
                     {
-                        <div class="p-3 text-center text-muted">
-                            Bu kursa henüz ders eklenmemiş.
-                        </div>
+                        <div class="p-3 text-center text-muted">Ders bulunamadı.</div>
                     }
                 </div>
 
-                <div class="card-footer">
-                    <a asp-action="Index" class="btn btn-outline-secondary w-100">Listeye Dön</a>
+                <div class="card-footer bg-white p-3">
+                    <button onclick="finishCourse(@Model.Id)" class="btn btn-success w-100 fw-bold py-2 mb-2 shadow-sm">
+                        <i class="bi bi-trophy-fill me-2"></i> KURSU BİTİR
+                    </button>
+
+                    <a asp-action="Index" class="btn btn-outline-secondary w-100 btn-sm">Listeye Dön</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    function finishCourse(id) {
+        Swal.fire({
+            title: 'Kursu tamamladınız mı?',
+            text: "Bu kursu bitirdiğinizde profilinize 'Tamamlandı' olarak eklenecektir.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            confirmButtonText: 'Evet, Bitirdim!',
+            cancelButtonText: 'Hayır, Devam Ediyorum'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Profile/CompleteCourse",
+                    data: { courseId: id },
+                    success: function (res) {
+                        if (res.success) {
+                            Swal.fire({
+                                title: 'Tebrikler! 🎉',
+                                text: res.message,
+                                icon: 'success',
+                                confirmButtonText: 'Ana Sayfaya Dön'
+                            }).then(() => {
+                                window.location.href = "/Home/Index"; // Ana sayfaya yönlendir
+                            });
+                        } else {
+                            Swal.fire('Hata', res.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Hata', 'Bir sorun oluştu. Giriş yaptığınızdan emin olun.', 'error');
+                    }
+                });
+            }
+        })
+    }
+</script>

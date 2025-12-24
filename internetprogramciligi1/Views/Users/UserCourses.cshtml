@@ -1,0 +1,24 @@
+﻿@model IEnumerable<internetprogramciligi1.Models.Enrollment>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h3>@ViewBag.UserName Kullanıcısının Kursları</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Kurs Adı</th>
+            <th>Kayıt Tarihi</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Course.Title</td>
+                <td>@item.EnrollmentDate.ToString("dd.MM.yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a href="/Users/Index" class="btn btn-secondary">Geri Dön</a>

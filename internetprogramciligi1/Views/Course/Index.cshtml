@@ -11,6 +11,51 @@
     </div>
 </div>
 
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm border-0 p-4" style="background-color: #f8f9fa;">
+                <form method="get" asp-action="Index" class="row g-2 align-items-center">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="Hangi kursu arıyorsunuz?" value="@ViewBag.CurrentSearch">
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <select name="categoryId" class="form-select">
+                            <option value="">Tüm Kategoriler</option>
+                            @if (ViewBag.Categories != null)
+                            {
+                                foreach (var cat in ViewBag.Categories)
+                                {
+                                    if (ViewBag.CurrentCategory != null && (int)ViewBag.CurrentCategory == cat.Id)
+                                    {
+                                        <option value="@cat.Id" selected>@cat.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@cat.Id">@cat.Name</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary fw-bold w-100">Ara</button>
+                        @if (!string.IsNullOrEmpty(ViewBag.CurrentSearch) || ViewBag.CurrentCategory != null)
+                        {
+                            <a asp-action="Index" class="btn btn-outline-secondary w-100">Sıfırla</a>
+                        }
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container">
     <div class="row">
         @if (Model.Any())
@@ -62,7 +107,7 @@
         {
             <div class="col-12 text-center py-5">
                 <div class="alert alert-warning d-inline-block">
-                    <i class="bi bi-exclamation-circle me-2"></i> Henüz listelenecek bir kurs bulunmuyor.
+                    <i class="bi bi-exclamation-circle me-2"></i> Aradığınız kriterlere uygun kurs bulunamadı.
                 </div>
             </div>
         }

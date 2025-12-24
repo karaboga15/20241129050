@@ -32,6 +32,9 @@
                             <ul class="dropdown-menu shadow mt-2" aria-labelledby="solMenuDropdown">
                                 <li><h6 class="dropdown-header text-muted small">GENEL</h6></li>
                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="Index"><i class="bi bi-house-door me-2"></i> Ana Sayfa</a></li>
+
+                                <li><a class="dropdown-item" asp-controller="Profile" asp-action="Index"><i class="bi bi-person-circle me-2"></i> Profilim</a></li>
+
                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="About"><i class="bi bi-info-circle me-2"></i> Hakkımızda</a></li>
                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="Contact"><i class="bi bi-envelope me-2"></i> İletişim</a></li>
 
@@ -44,6 +47,7 @@
                                     <li><a class="dropdown-item" asp-controller="Category" asp-action="Index"><i class="bi bi-tags me-2"></i> Kategoriler</a></li>
                                     <li><a class="dropdown-item" asp-controller="Course" asp-action="List"><i class="bi bi-journal-bookmark me-2"></i> Kurslar</a></li>
                                     <li><a class="dropdown-item" asp-controller="Instructor" asp-action="Index"><i class="bi bi-person-badge me-2"></i> Eğitmenler</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Users" asp-action="Index"><i class="bi bi-people me-2"></i> Üyeler</a></li>
                                 }
                             </ul>
                         </div>
@@ -54,14 +58,14 @@
                 {
                     <div class="d-flex align-items-center">
 
-                        <span class="text-secondary me-3 fw-bold d-none d-md-block border-end pe-3 fs-5">
+                        <a asp-controller="Profile" asp-action="Index" class="text-secondary me-3 fw-bold d-none d-md-block border-end pe-3 fs-5 text-decoration-none" title="Profilime Git">
                             <i class="bi bi-person-circle" style="font-size: 1.5rem; vertical-align: middle;"></i>
                             @User.Identity.Name
                             @if (User.IsInRole("Admin"))
                             {
                                 <span class="badge bg-danger ms-1" style="font-size: 0.7rem;">Admin</span>
                             }
-                        </span>
+                        </a>
 
                         <button onclick="logoutAjax()" class="btn btn-danger px-4 py-2 fw-bold shadow-sm">
                             <i class="bi bi-box-arrow-right me-1"></i> Çıkış
@@ -102,7 +106,6 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
@@ -122,12 +125,8 @@
                         type: "POST",
                         url: "/Account/Logout",
                         success: function (response) {
-                            if (response.success) {
-                                window.location.href = '/Account/Login';
-                            } else {
-                                // Fallback (eğer json dönmezse direkt yönlendir)
-                                window.location.href = '/Account/Login';
-                            }
+                            // Başarılı olursa veya response gelirse login'e at
+                            window.location.href = '/Account/Login';
                         },
                         error: function () {
                             Swal.fire('Hata', 'Çıkış yapılırken bir sorun oluştu.', 'error');

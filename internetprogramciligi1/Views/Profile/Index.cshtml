@@ -1,0 +1,126 @@
+﻿@model IEnumerable<internetprogramciligi1.Models.Enrollment>
+
+@{
+    ViewData["Title"] = "Profilim";
+
+    // Listeleri ayırıyoruz
+    var ongoingCourses = Model.Where(x => !x.IsCompleted).Select(x => x.Course).ToList();
+    var completedCourses = Model.Where(x => x.IsCompleted).Select(x => x.Course).ToList();
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm text-center p-4 border-0 bg-light">
+                <div class="mb-3">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center fw-bold shadow" style="width: 80px; height: 80px; font-size: 32px;">
+                        @ViewBag.UserName.Substring(0, 1).ToUpper()
+                    </div>
+                </div>
+                <h4 class="fw-bold">@ViewBag.UserName</h4>
+                <p class="text-muted small">@ViewBag.UserEmail</p>
+
+                <hr />
+
+                <h6 class="text-start mb-3 fw-bold text-primary"><i class="bi bi-shield-lock"></i> Şifre Değiştir</h6>
+                <form id="passwordForm">
+                    <div class="form-group mb-2">
+                        <input type="password" id="currentPass" class="form-control form-control-sm" placeholder="Mevcut Şifre" required>
+                    </div>
+                    <div class="form-group mb-2">
+                        <input type="password" id="newPass" class="form-control form-control-sm" placeholder="Yeni Şifre" required>
+                    </div>
+                    <button type="button" onclick="changePassword()" class="btn btn-dark btn-sm w-100">Güncelle</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+
+            <div class="mb-5">
+                <h3 class="fw-bold border-bottom pb-2 mb-3 text-warning">
+                    <i class="bi bi-play-circle-fill"></i> Devam Eden Kurslar
+                </h3>
+                @if (ongoingCourses.Any())
+                {
+                    <div class="row">
+                        @foreach (var course in ongoingCourses)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="card h-100 shadow-sm border-0">
+                                    <div class="card-body">
+                                        <h6 class="card-title fw-bold">@course.Title</h6>
+                                        <a asp-controller="Course" asp-action="Watch" asp-route-id="@course.Id" class="btn btn-warning btn-sm w-100 mt-2 text-dark">
+                                            <i class="bi bi-play-fill"></i> Devam Et
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-secondary">Şu anda devam ettiğiniz bir kurs yok.</div>
+                }
+            </div>
+
+            <div>
+                <h3 class="fw-bold border-bottom pb-2 mb-3 text-success">
+                    <i class="bi bi-check-circle-fill"></i> Tamamlanan Kurslar
+                </h3>
+                @if (completedCourses.Any())
+                {
+                    <div class="row">
+                        @foreach (var course in completedCourses)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="card h-100 shadow-sm border-0 border-start border-success border-5">
+                                    <div class="card-body">
+                                        <h6 class="card-title fw-bold text-success">@course.Title</h6>
+                                        <span class="badge bg-success mb-2">Tamamlandı</span>
+                                        <a asp-controller="Course" asp-action="Details" asp-route-id="@course.Id" class="btn btn-outline-success btn-sm w-100 mt-1">
+                                            <i class="bi bi-eye"></i> Tekrar İncele
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-light border">Henüz bitirdiğiniz bir kurs yok.</div>
+                }
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function changePassword() {
+        var current = document.getElementById("currentPass").value;
+        var newP = document.getElementById("newPass").value;
+
+        if(!current || !newP) {
+            Swal.fire('Uyarı', 'Lütfen tüm alanları doldurun.', 'warning');
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/Profile/ChangePassword",
+            data: { currentPassword: current, newPassword: newP },
+            success: function (res) {
+                if (res.success) {
+                    Swal.fire('Başarılı', res.message, 'success');
+                    document.getElementById("passwordForm").reset();
+                } else {
+                    Swal.fire('Hata', res.message, 'error');
+                }
+            }
+        });
+    }
+</script>

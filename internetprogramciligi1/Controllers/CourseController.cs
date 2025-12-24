@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
 using internetprogramciligi1.Hubs;
+using internetprogramciligi1.Data; // Context için gerekli
+using Microsoft.EntityFrameworkCore; // Include için gerekli
+using System.Linq;
 
 namespace internetprogramciligi1.Controllers
 {
@@ -14,24 +17,64 @@ namespace internetprogramciligi1.Controllers
         private readonly CategoryRepository _categoryRepo;
         private readonly InstructorRepository _instructorRepo;
         private readonly IHubContext<GeneralHub> _hubContext;
+        private readonly ApplicationDbContext _context; // EKLENDİ
 
-        public CourseController(CourseRepository courseRepo, CategoryRepository categoryRepo, InstructorRepository instructorRepo, IHubContext<GeneralHub> hubContext)
+        // Constructor'a context parametresi eklendi
+        public CourseController(CourseRepository courseRepo, CategoryRepository categoryRepo, InstructorRepository instructorRepo, IHubContext<GeneralHub> hubContext, ApplicationDbContext context)
         {
             _courseRepo = courseRepo;
             _categoryRepo = categoryRepo;
             _instructorRepo = instructorRepo;
             _hubContext = hubContext;
+            _context = context; // ATANDI
         }
 
-        // 1. KULLANICI TARAFI (VİTRİN) - Herkes Görebilir
+        // 1. KULLANICI TARAFI (VİTRİN)
         [AllowAnonymous]
-        public IActionResult Index()
+        public IActionResult Index(string search, int? categoryId)
         {
             var courses = _courseRepo.GetAll();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                courses = courses.Where(x => x.Title.ToLower().Contains(search.ToLower())).ToList();
+            }
+
+            if (categoryId.HasValue)
+            {
+                courses = courses.Where(x => x.CategoryId == categoryId.Value).ToList();
+            }
+
+            ViewBag.Categories = _categoryRepo.GetAll();
+            ViewBag.CurrentSearch = search;
+            ViewBag.CurrentCategory = categoryId;
+
             return View(courses);
         }
 
-        // Kullanıcı Detay Sayfası
+        // 2. ADMIN TARAFI (YÖNETİM LİSTESİ)
+        [Authorize(Roles = "Admin")]
+        public IActionResult List(string search, int? categoryId)
+        {
+            var courses = _courseRepo.GetAll();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                courses = courses.Where(x => x.Title.ToLower().Contains(search.ToLower())).ToList();
+            }
+
+            if (categoryId.HasValue)
+            {
+                courses = courses.Where(x => x.CategoryId == categoryId.Value).ToList();
+            }
+
+            ViewBag.Categories = _categoryRepo.GetAll();
+            ViewBag.CurrentSearch = search;
+            ViewBag.CurrentCategory = categoryId;
+
+            return View(courses);
+        }
+
         [AllowAnonymous]
         public IActionResult Details(int id)
         {
@@ -40,15 +83,14 @@ namespace internetprogramciligi1.Controllers
             return View(course);
         }
 
-        // 2. ADMIN TARAFI (YÖNETİM LİSTESİ) - Sadece Admin
-        [Authorize(Roles = "Admin")]
-        public IActionResult List()
+        [AllowAnonymous]
+        public IActionResult Watch(int id)
         {
-            var courses = _courseRepo.GetAll();
-            return View(courses); // Yeni oluşturacağımız Admin tablosuna gider
+            var course = _courseRepo.GetById(id);
+            if (course == null) return NotFound();
+            return View(course);
         }
 
-        // Sadece Admin Kurs Ekleyebilir
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
@@ -65,8 +107,6 @@ namespace internetprogramciligi1.Controllers
             {
                 _courseRepo.Add(course);
                 _hubContext.Clients.All.SendAsync("ReceiveInfo", "Yeni bir kurs eklendi: " + course.Title);
-
-                // Kaydettikten sonra Admin Listesine dön
                 return RedirectToAction("List");
             }
 
@@ -75,7 +115,33 @@ namespace internetprogramciligi1.Controllers
             return View(course);
         }
 
-        // Sadece Admin Silebilir
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var course = _courseRepo.GetById(id);
+            if (course == null) return NotFound();
+
+            ViewBag.Categories = new SelectList(_categoryRepo.GetAll(), "Id", "Name", course.CategoryId);
+            ViewBag.Instructors = new SelectList(_instructorRepo.GetAll(), "Id", "FullName", course.InstructorId);
+            return View(course);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public IActionResult Edit(Course course)
+        {
+            if (ModelState.IsValid)
+            {
+                _courseRepo.Update(course);
+                return RedirectToAction("List");
+            }
+
+            ViewBag.Categories = new SelectList(_categoryRepo.GetAll(), "Id", "Name", course.CategoryId);
+            ViewBag.Instructors = new SelectList(_instructorRepo.GetAll(), "Id", "FullName", course.InstructorId);
+            return View(course);
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public IActionResult DeleteAjax(int id)
@@ -84,12 +150,15 @@ namespace internetprogramciligi1.Controllers
             return Json(new { success = true });
         }
 
-        [AllowAnonymous] // Üye olmayan da izleyebilsin (veya [Authorize] yapabilirsin)
-        public IActionResult Watch(int id)
+        // KURSA KAYITLI ÜYELERİ GÖR (Admin)
+        [Authorize(Roles = "Admin")]
+        public IActionResult EnrolledUsers(int courseId)
         {
-            var course = _courseRepo.GetById(id);
-            if (course == null) return NotFound();
-            return View(course);
+            var enrollments = _context.Enrollments
+                                      .Include(e => e.User)
+                                      .Where(e => e.CourseId == courseId)
+                                      .ToList();
+            return View(enrollments);
         }
     }
 }

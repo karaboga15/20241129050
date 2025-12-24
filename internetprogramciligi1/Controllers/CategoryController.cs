@@ -58,5 +58,25 @@ namespace internetprogramciligi1.Controllers
            
             return Json(new { success = true });
         }
+        // CategoryController.cs içine ekle:
+
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var category = _categoryRepository.GetById(id);
+            if (category == null) return NotFound();
+            return View(category);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Category category)
+        {
+            if (ModelState.IsValid)
+            {
+                _categoryRepository.Update(category); // Yeni eklediğimiz metod
+                return RedirectToAction("Index");
+            }
+            return View(category);
+        }
     }
 }

@@ -41,5 +41,10 @@ namespace internetprogramciligi1.Repositories
                 _context.SaveChanges();
             }
         }
+        public void Update(Category category)
+        {
+            _context.Categories.Update(category);
+            _context.SaveChanges();
+        }
     }
 }

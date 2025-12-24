@@ -28,7 +28,7 @@ namespace internetprogramciligi1.Repositories
             return _context.Courses
                 .Include(c => c.Category)
                 .Include(c => c.Instructor)
-                .Include(c => c.Lessons) // <--- BUNU EKLEMEK ŞART
+                .Include(c => c.Lessons)
                 .FirstOrDefault(m => m.Id == id);
         }
 
@@ -60,6 +60,12 @@ namespace internetprogramciligi1.Repositories
         public int Count()
         {
             return _context.Courses.Count();
+        }
+
+        public void Update(Course course)
+        {
+            _context.Courses.Update(course);
+            _context.SaveChanges();
         }
     }
 }

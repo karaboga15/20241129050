@@ -37,5 +37,10 @@ namespace internetprogramciligi1.Repositories
                 _context.SaveChanges();
             }
         }
+        public void Update(Instructor instructor)
+        {
+            _context.Instructors.Update(instructor);
+            _context.SaveChanges();
+        }
     }
 }

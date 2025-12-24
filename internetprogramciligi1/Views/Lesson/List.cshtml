@@ -1,0 +1,92 @@
+﻿@model IEnumerable<internetprogramciligi1.Models.Lesson>
+
+@{
+    ViewData["Title"] = "Dersleri Yönet";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">'@ViewBag.CourseName' Dersleri</h6>
+        <div>
+            <a asp-action="Create" asp-route-courseId="@ViewBag.CourseId" class="btn btn-success btn-sm">
+                <i class="fas fa-plus"></i> Yeni Ders Ekle
+            </a>
+            <a asp-controller="Course" asp-action="List" class="btn btn-secondary btn-sm ms-2">
+                <i class="fas fa-arrow-left"></i> Kurslara Dön
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Ders Başlığı</th>
+                        <th>Video Linki</th>
+                        <th style="width: 200px;">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row_@item.Id">
+                                <td>@item.Title</td>
+                                <td>
+                                    <a href="@item.VideoUrl" target="_blank" class="text-info">
+                                        <i class="fas fa-external-link-alt"></i> Videoyu Aç
+                                    </a>
+                                </td>
+                                <td>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit"></i> Düzenle
+                                    </a>
+                                    <button onclick="deleteLesson(@item.Id)" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash"></i> Sil
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center text-muted">Bu kursta henüz ders yok.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function deleteLesson(id) {
+        Swal.fire({
+            title: 'Dersi silmek istiyor musunuz?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'Evet, Sil',
+            cancelButtonText: 'Vazgeç'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Lesson/DeleteAjax/" + id,
+                    success: function (res) {
+                        if (res.success) {
+                            $("#row_" + id).remove();
+                            Swal.fire('Silindi!', 'Ders silindi.', 'success');
+                        } else {
+                            Swal.fire('Hata', 'Silinemedi.', 'error');
+                        }
+                    }
+                });
+            }
+        })
+    }
+</script>

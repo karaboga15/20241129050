@@ -40,6 +40,7 @@
                                 <button onclick="deleteInstructor(@item.Id)" class="btn btn-danger btn-sm">
                                     <i class="fas fa-trash"></i> Sil
                                 </button>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Düzenle</a>
                             </td>
                         </tr>
                     }

@@ -41,6 +41,7 @@ namespace internetprogramciligi1.Repositories
         {
             dbSet.Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
+            _context.Set<T>().Update(entity);
             _context.SaveChanges();
         }
 

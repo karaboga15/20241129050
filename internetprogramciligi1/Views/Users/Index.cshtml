@@ -1,0 +1,143 @@
+﻿@model IEnumerable<internetprogramciligi1.Models.UserViewModel>
+
+@{
+    ViewData["Title"] = "Üye Yönetimi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Kayıtlı Üyeler</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Kullanıcı Adı</th>
+                        <th>Roller</th>
+                        <th style="width: 350px;">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var user in Model)
+                        {
+                            var isAdmin = user.Roles.Contains("Admin");
+                            <tr id="row_@user.Id">
+                                <td>@user.Email</td>
+                                <td>@user.UserName</td>
+                                <td>
+                                    @if (isAdmin)
+                                    {
+                                        <span class="badge bg-danger">Admin</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Üye</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="UserCourses" asp-route-userId="@user.Id" class="btn btn-info btn-sm text-white me-1" title="Aldığı Kurslar">
+                                        <i class="fas fa-book-open"></i> Kurslar
+                                    </a>
+
+                                    @if (isAdmin)
+                                    {
+                                        <button onclick="toggleAdmin('@user.Id', false)" class="btn btn-warning btn-sm me-1">
+                                            <i class="fas fa-user-minus"></i> Yetki Al
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button onclick="toggleAdmin('@user.Id', true)" class="btn btn-dark btn-sm me-1">
+                                            <i class="fas fa-user-shield"></i> Admin Yap
+                                        </button>
+                                    }
+
+                                    <button onclick="deleteUser('@user.Id')" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash"></i> Sil
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="4" class="text-center">Kayıtlı üye bulunamadı.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    // Kullanıcı Silme
+    function deleteUser(userId) {
+        Swal.fire({
+            title: 'Üyeyi silmek istiyor musunuz?',
+            text: "Bu işlem geri alınamaz!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'Evet, Sil',
+            cancelButtonText: 'İptal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Users/DeleteAjax",
+                    data: { id: userId },
+                    success: function (res) {
+                        if (res.success) {
+                            $("#row_" + userId).fadeOut(400, function() { $(this).remove(); });
+                            Swal.fire('Silindi!', 'Üye başarıyla silindi.', 'success');
+                        } else {
+                            Swal.fire('Hata', res.message || 'Silinemedi.', 'error');
+                        }
+                    },
+                    error: function () { Swal.fire('Hata', 'Bir sorun oluştu.', 'error'); }
+                });
+            }
+        })
+    }
+
+    // Admin Yetkisi Verme/Alma
+    function toggleAdmin(userId, makeAdmin) {
+        var actionUrl = makeAdmin ? "/Users/AssignAdmin" : "/Users/RevokeAdmin";
+        var actionText = makeAdmin ? "Kullanıcıya Admin yetkisi verilecek." : "Kullanıcının Admin yetkisi alınacak.";
+
+        Swal.fire({
+            title: 'Emin misiniz?',
+            text: actionText,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Evet, Onayla',
+            cancelButtonText: 'İptal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: actionUrl,
+                    data: { id: userId },
+                    success: function (res) {
+                        if (res.success) {
+                            Swal.fire('Başarılı', 'İşlem tamamlandı.', 'success').then(() => {
+                                location.reload(); // Sayfayı yenile
+                            });
+                        } else {
+                            Swal.fire('Hata', res.message || 'İşlem başarısız.', 'error');
+                        }
+                    },
+                    error: function () { Swal.fire('Hata', 'Bir sorun oluştu.', 'error'); }
+                });
+            }
+        })
+    }
+</script>
